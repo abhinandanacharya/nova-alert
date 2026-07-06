@@ -58,6 +58,12 @@ NovaAlert.toast({ type: 'success', title: 'Copied to clipboard' });
 | `text` | `string` | — | Body text |
 | `confirmLabel` | `string` | `'Got it'` | Button label |
 | `timer` | `number` (ms) | — | Auto-dismiss with a progress bar |
+| `allowOutsideClick` | `boolean` | `false` | Prevent closing by clicking outside the dialog |
+| `allowEscapeKey` | `boolean` | `false` | Allow dismissal with the Escape key |
+| `allowScroll` | `boolean` | `false` | Keep page scrolling enabled while the dialog is open |
+| `allowKeyboard` | `boolean` | `false` | Allow keyboard interaction with the dialog |
+| `focusConfirm` | `boolean` | `true` | Focus the primary action button when the modal opens |
+| `allowTimer` | `boolean` | `true` | Disable the automatic timer-based closing when set to `false` |
 
 Returns a `Promise<boolean>` — resolves `true` on button click, `false` if dismissed via backdrop click or timer.
 
