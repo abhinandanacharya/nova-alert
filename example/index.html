@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova Alert — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Nova Alert styles: swap this for the jsDelivr CDN link once pushed to GitHub -->
+<link rel="stylesheet" href="../dist/nova-alert.css">
+
+<style>
+  body{
+    margin:0; min-height:100vh; font-family:'Inter', sans-serif; color:#f3f4fb;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(124,108,255,0.25), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(62,230,216,0.15), transparent 60%),
+      linear-gradient(180deg, #0d0f1a, #151829);
+    display:flex; align-items:center; justify-content:center; padding:40px 20px;
+  }
+  .stage{ width:100%; max-width:760px; text-align:center; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#3ee6d8; font-weight:600; margin-bottom:18px; }
+  .eyebrow::before{ content:""; width:6px; height:6px; border-radius:50%; background:#3ee6d8; box-shadow:0 0 12px #3ee6d8; }
+  h1{ font-family:'Space Grotesk', sans-serif; font-size:clamp(32px,5vw,48px); line-height:1.1; margin:0 0 14px; font-weight:700; }
+  h1 span{ background:linear-gradient(120deg,#7c6cff,#3ee6d8); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  p.lead{ color:#a8adc7; font-size:16px; max-width:520px; margin:0 auto 40px; line-height:1.6; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+  .trigger{ appearance:none; border:1px solid rgba(255,255,255,.08); background:#1b1f36; color:#f3f4fb; font-family:'Inter',sans-serif; font-weight:600; font-size:14px; padding:16px 14px; border-radius:14px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; transition:transform .25s cubic-bezier(.2,.9,.3,1.3), background .2s ease; }
+  .trigger:hover{ transform:translateY(-3px); background:#20253f; }
+  .dot{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .dot.success{ background:rgba(62,230,139,.14); color:#3ee68b; }
+  .dot.error{ background:rgba(255,92,114,.14); color:#ff5c72; }
+  .dot.warning{ background:rgba(255,182,72,.14); color:#ffb648; }
+  .dot.info{ background:rgba(124,108,255,.16); color:#7c6cff; }
+  .dot.confirm{ background:rgba(255,93,162,.14); color:#ff5da2; }
+  .dot.toast{ background:rgba(62,230,216,.14); color:#3ee6d8; }
+  footer{ margin-top:44px; font-size:12.5px; color:#a8adc7; opacity:.7; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="eyebrow">Nova Alert</div>
+  <h1>Alerts that feel <span>alive</span></h1>
+  <p class="lead">Spring easing, drawn icons, and glassy depth. Drop-in replacement for SweetAlert-style popups.</p>
+
+  <div class="grid">
+    <button class="trigger" onclick="NovaAlert.fire({type:'success', title:'All set', text:'Your changes have been saved.'})">
+      <span class="dot success">✓</span> Success
+    </button>
+    <button class="trigger" onclick="NovaAlert.fire({type:'error', title:'Something broke', text:'We could not process that request.'})">
+      <span class="dot error">✕</span> Error
+    </button>
+    <button class="trigger" onclick="NovaAlert.fire({type:'warning', title:'Hold on', text:'This action can not be undone.'})">
+      <span class="dot warning">!</span> Warning
+    </button>
+    <button class="trigger" onclick="NovaAlert.fire({type:'info', title:'Heads up', text:'A new version is available.'})">
+      <span class="dot info">i</span> Info
+    </button>
+    <button class="trigger" onclick="NovaAlert.confirm({title:'Delete item?', text:'This will permanently remove the record.', confirmLabel:'Delete', cancelLabel:'Cancel'}).then(r => NovaAlert.toast({type:'info', title: r ? 'Deleted' : 'Cancelled'}))">
+      <span class="dot confirm">?</span> Confirm
+    </button>
+    <button class="trigger" onclick="NovaAlert.toast({type:'success', title:'Copied to clipboard'})">
+      <span class="dot toast">◱</span> Toast
+    </button>
+  </div>
+
+  <footer>This page loads the library from ../dist — swap those two tags for the jsDelivr CDN links in the README.</footer>
+</div>
+
+<!-- Nova Alert script: swap this for the jsDelivr CDN link once pushed to GitHub -->
+<script src="../dist/nova-alert.js"></script>
+</body>
+</html>

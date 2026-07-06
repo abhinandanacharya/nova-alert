@@ -1,0 +1,13 @@
+{
+  "name": "nova-alert",
+  "version": "1.0.0",
+  "description": "A modern, spring-animated alert/toast/confirm library — SweetAlert-style API with smoother transitions.",
+  "main": "dist/nova-alert.js",
+  "style": "dist/nova-alert.css",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abhinandanachary/nova-alert.git"
+  },
+  "keywords": ["alert", "toast", "modal", "confirm", "sweetalert", "ui", "animation"]
+}
