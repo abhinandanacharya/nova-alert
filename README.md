@@ -9,8 +9,8 @@ A modern, spring-animated alert / confirm / toast library — a drop-in, depende
 No npm install needed. Add these two tags to any HTML page:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abhinandanachary/nova-alert@main/dist/nova-alert.min.css">
-<script src="https://cdn.jsdelivr.net/gh/abhinandanachary/nova-alert@main/dist/nova-alert.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abhinandanacharya/nova-alert@main/dist/nova-alert.min.css">
+<script src="https://cdn.jsdelivr.net/gh/abhinandanacharya/nova-alert@main/dist/nova-alert.min.js"></script>
 ```
 
 That's it — `window.NovaAlert` is now available globally.
@@ -18,8 +18,8 @@ That's it — `window.NovaAlert` is now available globally.
 > `@main` always serves the latest commit on the `main` branch. For production use, pin to a tagged release instead so updates never break you silently, e.g. after you push a `v1.0.0` tag:
 >
 > ```html
-> <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abhinandanachary/nova-alert@v1.0.0/dist/nova-alert.min.css">
-> <script src="https://cdn.jsdelivr.net/gh/abhinandanachary/nova-alert@v1.0.0/dist/nova-alert.min.js"></script>
+> <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abhinandanacharya/nova-alert@v1.0.0/dist/nova-alert.min.css">
+> <script src="https://cdn.jsdelivr.net/gh/abhinandanacharya/nova-alert@v1.0.0/dist/nova-alert.min.js"></script>
 > ```
 
 ## Usage
@@ -96,7 +96,7 @@ Works as a plain `<script>` global (`window.NovaAlert`) or as a CommonJS module 
    ```
 3. Commit, push, and tag a release (e.g. `git tag v1.0.1 && git push --tags`) so pinned CDN links pick it up.
 4. jsDelivr caches `@main` for up to ~12 hours. To force-refresh immediately after a push, hit:
-   `https://purge.jsdelivr.net/gh/abhinandanachary/nova-alert@main/dist/nova-alert.min.js`
+   `https://purge.jsdelivr.net/gh/abhinandanacharya/nova-alert@main/dist/nova-alert.min.js`
 
 ## License
 
