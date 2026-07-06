@@ -58,6 +58,9 @@
     <button class="trigger" onclick="NovaAlert.fire({type:'info', title:'Heads up', text:'A new version is available.'})">
       <span class="dot info">i</span> Info
     </button>
+    <button class="trigger" onclick="NovaAlert.fire({type:'info', title:'Blocking alert', text:'This modal pauses the page until you dismiss it.', allowOutsideClick:false, allowEscapeKey:false, allowScroll:false, allowKeyboard:false})">
+      <span class="dot confirm">⛔</span> Blocking
+    </button>
     <button class="trigger" onclick="NovaAlert.confirm({title:'Delete item?', text:'This will permanently remove the record.', confirmLabel:'Delete', cancelLabel:'Cancel'}).then(r => NovaAlert.toast({type:'info', title: r ? 'Deleted' : 'Cancelled'}))">
       <span class="dot confirm">?</span> Confirm
     </button>

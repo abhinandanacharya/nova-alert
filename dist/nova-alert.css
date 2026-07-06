@@ -17,6 +17,12 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+body.nv-body-lock,
+html.nv-body-lock {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* ===== Overlay ===== */
 .nv-overlay {
   position: fixed; inset: 0;
@@ -28,6 +34,7 @@
   opacity: 0;
   transition: opacity .35s ease, backdrop-filter .45s ease;
   padding: 20px;
+  touch-action: none;
 }
 .nv-overlay.show {
   opacity: 1;

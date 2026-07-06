@@ -27,6 +27,9 @@
     info:    { icon: '#7c6cff', ring: '#7c6cff', bg: 'rgba(124,108,255,0.16)', glow: '#7c6cff', btnA: '#7c6cff', btnB: '#3ee6d8', animClass: '' }
   };
 
+  var activeModalCount = 0;
+  var lockState = null;
+
   function ensureToastWrap() {
     var wrap = document.getElementById('nv-toast-wrap');
     if (!wrap) {
@@ -38,10 +41,64 @@
     return wrap;
   }
 
+  function normalizeOptions(opts) {
+    opts = opts || {};
+    return {
+      type: opts.type || 'info',
+      title: opts.title || '',
+      text: opts.text || '',
+      confirmLabel: opts.confirmLabel || 'Got it',
+      cancelLabel: opts.cancelLabel || 'Cancel',
+      timer: typeof opts.timer === 'number' ? opts.timer : null,
+      allowOutsideClick: opts.allowOutsideClick === true,
+      allowEscapeKey: opts.allowEscapeKey === true,
+      allowScroll: opts.allowScroll === true,
+      allowKeyboard: opts.allowKeyboard === true,
+      focusConfirm: opts.focusConfirm !== false,
+      allowTimer: opts.allowTimer !== false
+    };
+  }
+
+  function setBodyLock(shouldLock) {
+    if (!document.body || !document.documentElement) return;
+    if (shouldLock) {
+      if (activeModalCount === 0) {
+        lockState = {
+          overflow: document.body.style.overflow,
+          htmlOverflow: document.documentElement.style.overflow,
+          paddingRight: document.body.style.paddingRight
+        };
+        document.body.classList.add('nv-body-lock');
+        document.documentElement.classList.add('nv-body-lock');
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        var scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        if (scrollbarWidth > 0) {
+          document.body.style.paddingRight = scrollbarWidth + 'px';
+        }
+      }
+      activeModalCount += 1;
+    } else if (activeModalCount > 0) {
+      activeModalCount -= 1;
+      if (activeModalCount === 0) {
+        document.body.classList.remove('nv-body-lock');
+        document.documentElement.classList.remove('nv-body-lock');
+        document.body.style.overflow = lockState && lockState.overflow !== undefined ? lockState.overflow : '';
+        document.documentElement.style.overflow = lockState && lockState.htmlOverflow !== undefined ? lockState.htmlOverflow : '';
+        document.body.style.paddingRight = lockState && lockState.paddingRight !== undefined ? lockState.paddingRight : '';
+        lockState = null;
+      }
+    }
+  }
+
   function buildCard(opts) {
     var t = THEME[opts.type] || THEME.info;
     var card = document.createElement('div');
     card.className = 'nv-card';
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-modal', 'true');
+    card.setAttribute('aria-label', opts.title || 'Alert');
+    card.setAttribute('tabindex', '-1');
     card.style.setProperty('--glow', t.glow);
     card.style.setProperty('--icon-bg', t.bg);
     card.style.setProperty('--icon-ring', t.ring);
@@ -59,14 +116,108 @@
     return card;
   }
 
+  function attachModalBehavior(overlay, card, opts, close) {
+    var activeElementBeforeOpen = document.activeElement;
+
+    function getFocusable() {
+      return Array.prototype.filter.call(card.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'), function (el) {
+        return !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true' && el.offsetParent !== null;
+      });
+    }
+
+    function focusInitialControl() {
+      if (opts.focusConfirm !== true) {
+        card.focus();
+        return;
+      }
+      var target = card.querySelector('.nv-btn.primary') || card.querySelector('.nv-btn') || card;
+      if (target && typeof target.focus === 'function') {
+        target.focus();
+      } else {
+        card.focus();
+      }
+    }
+
+    function trapTab(event) {
+      if (opts.allowKeyboard === true) return;
+      var focusable = getFocusable();
+      if (!focusable.length) {
+        event.preventDefault();
+        card.focus();
+        return;
+      }
+      var index = focusable.indexOf(document.activeElement);
+      if (event.shiftKey) {
+        if (index <= 0) {
+          event.preventDefault();
+          focusable[focusable.length - 1].focus();
+        }
+      } else if (index === focusable.length - 1) {
+        event.preventDefault();
+        focusable[0].focus();
+      }
+    }
+
+    function handleKeydown(event) {
+      if (opts.allowKeyboard === true) {
+        if (event.key === 'Escape' && opts.allowEscapeKey !== true) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        if (opts.allowEscapeKey === true) {
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+
+      if (event.key === 'Tab') {
+        trapTab(event);
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    overlay.addEventListener('click', function (event) {
+      if (event.target === overlay && opts.allowOutsideClick === true) {
+        close(false);
+      }
+    });
+
+    document.addEventListener('keydown', handleKeydown, true);
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        overlay.classList.add('show');
+        focusInitialControl();
+      });
+    });
+
+    return function cleanup() {
+      document.removeEventListener('keydown', handleKeydown, true);
+      if (activeElementBeforeOpen && typeof activeElementBeforeOpen.focus === 'function') {
+        activeElementBeforeOpen.focus();
+      }
+    };
+  }
+
   var NovaAlert = {
     fire: function (opts) {
-      opts = opts || {};
+      opts = normalizeOptions(opts);
       return new Promise(function (resolve) {
         var overlay = document.createElement('div');
         overlay.className = 'nv-overlay';
         var card = buildCard(opts);
         var actions = card.querySelector('.nv-actions');
+        var closed = false;
+        var cleanup = null;
 
         var okBtn = document.createElement('button');
         okBtn.className = 'nv-btn primary';
@@ -75,19 +226,22 @@
 
         overlay.appendChild(card);
         document.body.appendChild(overlay);
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () { overlay.classList.add('show'); });
-        });
+        setBodyLock(!opts.allowScroll);
+        cleanup = attachModalBehavior(overlay, card, opts, function (val) { close(val); });
 
         function close(val) {
+          if (closed) return;
+          closed = true;
           overlay.classList.remove('show');
           overlay.classList.add('hide');
+          setBodyLock(false);
+          if (cleanup) cleanup();
           setTimeout(function () { overlay.remove(); resolve(val); }, 320);
         }
-        okBtn.addEventListener('click', function () { close(true); });
-        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(false); });
 
-        if (opts.timer) {
+        okBtn.addEventListener('click', function () { close(true); });
+
+        if (opts.timer && opts.allowTimer !== false) {
           var bar = document.createElement('div');
           bar.className = 'nv-progress';
           card.appendChild(bar);
@@ -98,12 +252,14 @@
     },
 
     confirm: function (opts) {
-      opts = opts || {};
+      opts = normalizeOptions(Object.assign({ type: 'warning' }, opts));
       return new Promise(function (resolve) {
         var overlay = document.createElement('div');
         overlay.className = 'nv-overlay';
-        var card = buildCard(Object.assign({ type: 'warning' }, opts));
+        var card = buildCard(opts);
         var actions = card.querySelector('.nv-actions');
+        var closed = false;
+        var cleanup = null;
 
         var cancelBtn = document.createElement('button');
         cancelBtn.className = 'nv-btn ghost';
@@ -118,18 +274,21 @@
 
         overlay.appendChild(card);
         document.body.appendChild(overlay);
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () { overlay.classList.add('show'); });
-        });
+        setBodyLock(!opts.allowScroll);
+        cleanup = attachModalBehavior(overlay, card, opts, function (val) { close(val); });
 
         function close(val) {
+          if (closed) return;
+          closed = true;
           overlay.classList.remove('show');
           overlay.classList.add('hide');
+          setBodyLock(false);
+          if (cleanup) cleanup();
           setTimeout(function () { overlay.remove(); resolve(val); }, 320);
         }
+
         okBtn.addEventListener('click', function () { close(true); });
         cancelBtn.addEventListener('click', function () { close(false); });
-        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(false); });
       });
     },
 
