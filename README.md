@@ -4,6 +4,8 @@ A modern, spring-animated alert / confirm / toast library — a drop-in, depende
 
 **[Live demo](example/index.html)**
 
+**[Video demo](assets/nova-alert-demo.mp4)**
+
 ## Install via CDN (jsDelivr, pulls straight from this GitHub repo)
 
 No npm install needed. Add these two tags to any HTML page:
