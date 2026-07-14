@@ -2,11 +2,33 @@
 
 A modern, spring-animated alert / confirm / toast library — a drop-in, dependency-free alternative to SweetAlert with smoother, fancier transitions (drawn icons, spring easing, staggered reveals).
 
-**[Live demo](example/index.html)**
+**🌐 Live Demo:** https://abhinandanacharya.github.io/nova-alert/
 
- ![Nova Alert demo](assets/nova-alert-demo.gif)
+![Nova Alert demo](assets/nova-alert-demo.gif)
 
-## Install via CDN (jsDelivr, pulls straight from this GitHub repo)
+---
+
+# Install
+
+## npm
+
+```bash
+npm install nova-alert
+```
+
+```javascript
+import NovaAlert from "nova-alert";
+```
+
+or
+
+```javascript
+const NovaAlert = require("nova-alert");
+```
+
+---
+
+## CDN (jsDelivr)
 
 No npm install needed. Add these two tags to any HTML page:
 
@@ -17,95 +39,146 @@ No npm install needed. Add these two tags to any HTML page:
 
 That's it — `window.NovaAlert` is now available globally.
 
-> `@main` always serves the latest commit on the `main` branch. For production use, pin to a tagged release instead so updates never break you silently, e.g. after you push a `v1.0.0` tag:
->
-> ```html
-> <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abhinandanacharya/nova-alert@v1.0.0/dist/nova-alert.min.css">
-> <script src="https://cdn.jsdelivr.net/gh/abhinandanacharya/nova-alert@v1.0.0/dist/nova-alert.min.js"></script>
-> ```
+> `@main` always serves the latest commit on the `main` branch. For production use, pin to a tagged release instead so updates never break you silently.
 
-## Usage
+Example:
 
-```js
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abhinandanacharya/nova-alert@v1.0.0/dist/nova-alert.min.css">
+<script src="https://cdn.jsdelivr.net/gh/abhinandanacharya/nova-alert@v1.0.0/dist/nova-alert.min.js"></script>
+```
+
+---
+
+# Usage
+
+```javascript
 // Simple alert
 NovaAlert.fire({
-  type: 'success',       // success | error | warning | info
+  type: 'success',
   title: 'All set',
   text: 'Your changes have been saved.'
 });
 
 // Auto-dismiss after 2.5s with a progress bar
-NovaAlert.fire({ type: 'info', title: 'Syncing…', timer: 2500 });
+NovaAlert.fire({
+  type: 'info',
+  title: 'Syncing…',
+  timer: 2500
+});
 
-// Confirm dialog — returns a Promise<boolean>
+// Confirm dialog
 const ok = await NovaAlert.confirm({
   title: 'Delete item?',
   text: 'This will permanently remove the record.',
   confirmLabel: 'Delete',
   cancelLabel: 'Cancel'
 });
-if (ok) { /* proceed */ }
 
-// Toast (top-right, stacks automatically)
-NovaAlert.toast({ type: 'success', title: 'Copied to clipboard' });
+if (ok) {
+  // proceed
+}
+
+// Toast
+NovaAlert.toast({
+  type: 'success',
+  title: 'Copied to clipboard'
+});
 ```
 
-## API
+---
 
-### `NovaAlert.fire(options)`
+# API
+
+## `NovaAlert.fire(options)`
+
 | Option | Type | Default | Description |
-|---|---|---|---|
+|--------|------|---------|-------------|
 | `type` | `'success' \| 'error' \| 'warning' \| 'info'` | `'info'` | Icon + accent color |
 | `title` | `string` | — | Heading text |
 | `text` | `string` | — | Body text |
 | `confirmLabel` | `string` | `'Got it'` | Button label |
-| `timer` | `number` (ms) | — | Auto-dismiss with a progress bar |
-| `allowOutsideClick` | `boolean` | `false` | Prevent closing by clicking outside the dialog |
-| `allowEscapeKey` | `boolean` | `false` | Allow dismissal with the Escape key |
-| `allowScroll` | `boolean` | `false` | Keep page scrolling enabled while the dialog is open |
-| `allowKeyboard` | `boolean` | `false` | Allow keyboard interaction with the dialog |
-| `focusConfirm` | `boolean` | `true` | Focus the primary action button when the modal opens |
-| `allowTimer` | `boolean` | `true` | Disable the automatic timer-based closing when set to `false` |
+| `timer` | `number` | — | Auto-dismiss with progress bar |
+| `allowOutsideClick` | `boolean` | `false` | Prevent closing by clicking outside |
+| `allowEscapeKey` | `boolean` | `false` | Allow dismissal with Escape |
+| `allowScroll` | `boolean` | `false` | Keep page scrolling enabled |
+| `allowKeyboard` | `boolean` | `false` | Enable keyboard interaction |
+| `focusConfirm` | `boolean` | `true` | Focus confirm button |
+| `allowTimer` | `boolean` | `true` | Disable automatic timer closing when `false` |
 
-Returns a `Promise<boolean>` — resolves `true` on button click, `false` if dismissed via backdrop click or timer.
+Returns a `Promise<boolean>`.
 
-### `NovaAlert.confirm(options)`
-Same shape as `fire`, plus `cancelLabel` (default `'Cancel'`). Renders both a Cancel and Confirm button. Returns `Promise<boolean>`.
+---
 
-### `NovaAlert.toast(options)`
+## `NovaAlert.confirm(options)`
+
+Same shape as `fire`, plus:
+
 | Option | Type | Default |
-|---|---|---|
+|--------|------|---------|
+| `cancelLabel` | `string` | `'Cancel'` |
+
+Returns `Promise<boolean>`.
+
+---
+
+## `NovaAlert.toast(options)`
+
+| Option | Type | Default |
+|--------|------|---------|
 | `type` | same as above | `'info'` |
 | `title` | `string` | — |
 | `text` | `string` | — |
-| `timer` | `number` (ms) | `3200` |
+| `timer` | `number` | `3200` |
 
-## Files
+---
+
+# Files
 
 ```
 dist/
-  nova-alert.css       (source, ~7KB)
-  nova-alert.min.css   (use this in production)
-  nova-alert.js        (UMD, source, ~7KB)
-  nova-alert.min.js    (use this in production)
+  nova-alert.css
+  nova-alert.min.css
+  nova-alert.js
+  nova-alert.min.js
+
 example/
-  index.html           (working demo)
+  index.html
 ```
 
-Works as a plain `<script>` global (`window.NovaAlert`) or as a CommonJS module (`require('nova-alert')`).
+Works as:
 
-## Publishing updates
+- `window.NovaAlert`
+- CommonJS (`require('nova-alert')`)
+
+---
+
+# Publishing Updates
 
 1. Edit the source files in `dist/`.
-2. Re-minify:
-   ```bash
-   npx terser dist/nova-alert.js -c -m -o dist/nova-alert.min.js --comments '/^!/'
-   npx cleancss -o dist/nova-alert.min.css dist/nova-alert.css
-   ```
-3. Commit, push, and tag a release (e.g. `git tag v1.0.1 && git push --tags`) so pinned CDN links pick it up.
-4. jsDelivr caches `@main` for up to ~12 hours. To force-refresh immediately after a push, hit:
-   `https://purge.jsdelivr.net/gh/abhinandanacharya/nova-alert@main/dist/nova-alert.min.js`
 
-## License
+2. Re-minify:
+
+```bash
+npx terser dist/nova-alert.js -c -m -o dist/nova-alert.min.js --comments '/^!/'
+npx cleancss -o dist/nova-alert.min.css dist/nova-alert.css
+```
+
+3. Commit, push and tag a release.
+
+```bash
+git tag v1.0.1
+git push --tags
+```
+
+4. Purge jsDelivr cache if required:
+
+```
+https://purge.jsdelivr.net/gh/abhinandanacharya/nova-alert@main/dist/nova-alert.min.js
+```
+
+---
+
+# License
 
 MIT
